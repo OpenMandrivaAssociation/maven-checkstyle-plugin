@@ -1,6 +1,6 @@
 Name:             maven-checkstyle-plugin
 Version:          2.6
-Release:          3
+Release:          5
 Summary:          Plugin that generates a report regarding the code style used by the developers
 Group:            Development/Java
 License:          ASL 2.0
