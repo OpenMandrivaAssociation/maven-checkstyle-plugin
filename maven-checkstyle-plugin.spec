@@ -1,28 +1,19 @@
 %{?_javapackages_macros:%_javapackages_macros}
 Name:             maven-checkstyle-plugin
-Version:          2.10
-Release:          2.0%{?dist}
+Version:          2.13
+Release:          2.1
 Summary:          Plugin that generates a report regarding the code style used by the developers
-
+Group:            Development/Java
 License:          ASL 2.0
 URL:              http://maven.apache.org/plugins/%{name}
 
 Source0:          http://repo2.maven.org/maven2/org/apache/maven/plugins/%{name}/%{version}/%{name}-%{version}-source-release.zip
 
-Patch0:           %{name}-maven-core-dep.patch
-
 BuildArch:        noarch
 
-BuildRequires:    java-devel >= 1:1.6.0
-BuildRequires:    jpackage-utils
 BuildRequires:    maven-local
 BuildRequires:    maven-plugin-plugin >= 2.5.1
 BuildRequires:    plexus-containers-component-metadata >= 1.5.1
-BuildRequires:    maven-javadoc-plugin
-BuildRequires:    maven-resources-plugin
-BuildRequires:    maven-compiler-plugin >= 2.0.2
-BuildRequires:    maven-jar-plugin >= 2.2
-BuildRequires:    maven-install-plugin >= 2.2
 BuildRequires:    checkstyle >= 5.6
 BuildRequires:    plexus-cli >= 1.2
 BuildRequires:    maven-artifact-manager 
@@ -30,33 +21,12 @@ BuildRequires:    plexus-resources
 BuildRequires:    maven-doxia-sitetools
 BuildRequires:    maven-doxia-sink-api
 
-Requires:         maven
-Requires:         maven-shared-reporting-impl >= 2.0.4.3
-Requires:         maven-doxia-sink-api
-Requires:         maven-doxia-sitetools >= 1.0
-Requires:         maven-doxia-tools >= 1.0.2
-Requires:         plexus-containers-container-default
-Requires:         plexus-resources
-Requires:         plexus-utils >= 1.5.6
-Requires:         plexus-velocity >= 1.1.7
-Requires:         checkstyle >= 5.6
-Requires:         velocity >= 1.5
-Requires:         apache-commons-collections >= 3.2.1
-Requires:         junit >= 3.8.2
-Requires:         maven-plugin-testing-harness >= 1.2
-
-Requires:         java >= 1:1.6.0
-Requires:         jpackage-utils
-
-Provides:         maven2-plugin-checkstyle = %{version}-%{release}
-Obsoletes:        maven2-plugin-checkstyle <= 0:2.0.8
-
 %description
 Generates a report on violations of code style and optionally fails the build
 if violations are detected.
 
 %package javadoc
-
+Group:            Documentation
 Summary:          Javadoc for %{name}
 Requires:         jpackage-utils
 
@@ -65,38 +35,38 @@ This package contains the API documentation for %{name}.
 
 %prep
 %setup -q
-%patch0 
+%pom_remove_plugin :apache-rat-plugin
 
 %build
-# During testing, component descriptors can't be found. 
-mvn-rpmbuild install javadoc:aggregate -Dmaven.test.failure.ignore
+%mvn_build -f -- -DmavenVersion=3.2.1
 
 %install
-# jars
-install -d -m 0755 %{buildroot}%{_javadir}
-install -pm 644 target/%{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
+%mvn_install
 
-# pom
-install -d -m 755 %{buildroot}%{_mavenpomdir}
-install -pm 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap JPP-%{name}.pom %{name}.jar
-
-# javadoc
-install -d -m 0755 %{buildroot}%{_javadocdir}/%{name}
-cp -pr target/site/api*/* %{buildroot}%{_javadocdir}/%{name}
-
-
-%files
+%files -f .mfiles
 %doc LICENSE NOTICE
-%{_javadir}/*
-%{_mavenpomdir}/JPP-%{name}.pom
-%{_mavendepmapfragdir}/%{name}
 
-%files javadoc
+%files javadoc -f .mfiles-javadoc
 %doc LICENSE NOTICE
-%{_javadocdir}/%{name}
 
 %changelog
+* Tue Oct 14 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.13-2
+- Remove legacy Obsoletes/Provides for maven2 plugin
+
+* Mon Sep 23 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.13-1
+- Update to upstream version 2.13
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.12-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Mon Mar 17 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.12-1
+- Update to upstream version 2.12
+- Update to current packaging guidelines
+- Use Maven 3.x APIs
+
+* Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 2.10-3
+- Use Requires: java-headless rebuild (#1067528)
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.10-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
