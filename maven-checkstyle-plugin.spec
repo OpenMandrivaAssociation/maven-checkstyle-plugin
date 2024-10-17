@@ -5,7 +5,7 @@ Release:          2.3
 Summary:          Plugin that generates a report regarding the code style used by the developers
 Group:            Development/Java
 License:          ASL 2.0
-URL:              http://maven.apache.org/plugins/%{name}
+URL:              https://maven.apache.org/plugins/%{name}
 
 Source0:          http://repo2.maven.org/maven2/org/apache/maven/plugins/%{name}/%{version}/%{name}-%{version}-source-release.zip
 
